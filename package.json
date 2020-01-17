@@ -1,0 +1,17 @@
+{
+  "name": "litmos",
+  "version": "1.0.0",
+  "description": "For interfacing with ShSp",
+  "main": "manageCerts.js",
+  "scripts": {
+    "test": "manageCerts.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fetch": "^1.1.0",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5"
+  }
+}
