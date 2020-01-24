@@ -1,5 +1,11 @@
 var fetch = require("node-fetch");
-
+var baseUrl = "https://api.litmos.com/v1.svc/";
+var options = { 
+    'method': 'GET',
+    'muteHttpExceptions' : true,
+    'headers': {
+      'apikey': 'ed8c2c0f-8d9f-4e0d-a4ff-76c897e53c54' }
+  }
 const getCompanyUsers = async (companyID) => {
   var companyUserData = await getAllCompanyUsers(companyID);
   return companyUserData;
@@ -26,14 +32,14 @@ const getUserData = async (username) => {
 
   var certified = await certificationTestPassed(username);
 
-  var recentCourseTitle, mostRecentCourseCompletionDate;
+  var recentCourseTitle, recentCourseCompletionDate;
 
-  if (recentAchievements[0]) { 
+  if (recentAchievements.length>0) { 
     recentCourseTitle = recentAchievements[0].Title;
-    mostRecentCourseCompletionDate = convertLitmosDate(recentAchievements[0].AchievementDate);}
+    recentCourseCompletionDate = convertLitmosDate(recentAchievements[0].AchievementDate);}
   else {
     recentCourseTitle = "No recent courses completed";
-    mostRecentCourseCompletionDate = "N/A"
+    recentCourseCompletionDate = "N/A"
   }
 
 
@@ -43,7 +49,7 @@ const getUserData = async (username) => {
     certificationStatus: certified,
     totalCoursesCompleted: allAchievements.length,
     recentCourseTitle: recentCourseTitle,
-    recentCourseCompletionDate: mostRecentCourseCompletionDate,
+    recentCourseCompletionDate: recentCourseCompletionDate,
     daysSinceLastLogin:daysSinceLastLogin(userAccountData.LastLogin),
     daysSinceCreatedDate: daysSinceCreatedDate(userAccountData.CreatedDate)
   }
@@ -82,7 +88,7 @@ const getRecentAchievements = (achievements, numDays) => {
   return recent;
 }
 
-const certificationTestPassed = async (username) => {
+const certificationTestPassed = async (userAchievements) => {
   //below are the course IDs that together make up certification
   // PgqK7l17TdE1 is the MA essentials cert exam
   // ax6BzyMrCds1 is the SWS cert exam
@@ -94,7 +100,7 @@ const certificationTestPassed = async (username) => {
   }
   //GET courses from litmos with [username]
   //will return JSON found above as `data`
-  var userAchievementData = (await getLitmosAchievement(username));
+  var userAchievementData = [userAchievements];
   var examsPassed = userAchievementData.filter(courseID => (certExamIds.includes(courseID.CourseId)));
   return {
     certificationPercent: (examsPassed.length*100/certExamIds.length),
@@ -122,7 +128,7 @@ const convertThresholdToDate = (numdays) => {
 
 const getCompanyTrainingStatus = async (companyID, trainingThreshold) => {
   var trainingThresholdDate = convertThresholdToDate(trainingThreshold);
-  var users = (await getCompanyUsers(companyID));
+  var users = await getCompanyUsers(companyID);
   var userData = await getAllUserData(users);
   
   //array of certified users
@@ -130,7 +136,7 @@ const getCompanyTrainingStatus = async (companyID, trainingThreshold) => {
  
   //array of users who completed a course in the report threshold range
   var achievementUsers = userData.filter(user => {
-    return (user.mostRecentCourseCompletionDate>trainingThresholdDate);
+    return ((user.recentCourseCompletionDate) >trainingThresholdDate);
     
   });
  
@@ -148,7 +154,7 @@ const getCompanyTrainingStatus = async (companyID, trainingThreshold) => {
         }
     }
   //return in progress if there have been certifications this week or new users created
-    else if (achievementUsers || startedInLastWeekUsers){
+    else if (achievementUsers.length || startedInLastWeekUsers.length){
     return {
       totalLearners: users.length,
       trainingStatus: "In Progress",
@@ -157,7 +163,7 @@ const getCompanyTrainingStatus = async (companyID, trainingThreshold) => {
       }
     }
 //return stalled if no progress this week
-    else if (users) {
+    else if (Array.isArray(users) && users.length) {
       return {
         totalLearners: users.length,
         trainingStatus: "Stalled",
@@ -246,13 +252,14 @@ const getAllCompanyUsers = async (companyID) => {
 const runner = async (companyID) => {
   var trainingReportThreshold = 7 //denotes that 7 days is when to check achievement records
   var results = await getCompanyTrainingStatus(companyID, trainingReportThreshold);
-  console.log(results);
+  console.log("\nTraining Results:\n"+JSON.stringify(results));
 }
 
-runner("308478809");
+runner("308479444");
+
+//has 3 certified users:
+//runner("308478809");
 
 const parseUsername = (username) => {
   return username.split("u")[0].substr(1);
 }
-
-//parseUsername("c3u313420602e");

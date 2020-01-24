@@ -27,12 +27,16 @@ function daysSinceLastLogin (lastLogin) {
 
 function convertThresholdToDate (numdays)  {
   var d = new Date();
-  var datebefore = d-(numdays*1000*60*60*24);
-  return datebefore;
+  var ts = d.valueOf();
+  var datebefore = ts-( numdays * 1000 * 60 * 60 * 24);
+  Logger.log("current date: "+d);
+  Logger.log("New date: "+d.setTime(+datebefore));
+  Logger.log("d after adjusting: "+d);
+  return d;
 }
 
 function getRecentAchievements (achievements, numDays)  {
-  var recent = achievements.filter(achievement => {
+  var recent = achievements.filter(function (achievement){ 
     var today = new Date();
     var achievementDate = convertLitmosDate(achievement.AchievementDate)
     var daysAgo = ((today-achievementDate)/(1000*60*60*24)).toFixed(2);
@@ -42,5 +46,9 @@ function getRecentAchievements (achievements, numDays)  {
 }
 
 function parseUsername (username)  {
+  return username.split("u")[0].substr(1);
+}
+
+function parseCompanyIdFromLitmosUsername (username)  {
   return username.split("u")[0].substr(1);
 }

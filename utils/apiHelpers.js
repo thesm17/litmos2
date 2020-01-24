@@ -15,7 +15,6 @@ function getUser(username) {
     return user;
   } catch (err) {
     Logger.log(err); 
-    throw new Error(err)
   }
 }
 
@@ -31,8 +30,7 @@ function getLitmosAchievement(username, since) {
     var achievements =  JSON.parse(result.getContentText());
     return achievements;
   } catch (err) {
-    console.log(err); 
-    throw new Error(err);
+    Logger.log(err);
     }
   }
 
@@ -45,7 +43,6 @@ function getAllCompanyUsers(companyID) {
       var users =  JSON.parse(result.getContentText());
       return users;
     } catch (err) {
-      console.log(err); 
-      throw new Error(err)
+      Logger.log(err)
     } 
   }
