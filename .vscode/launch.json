@@ -8,7 +8,8 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/manageCerts.js"
+      "program": "${workspaceFolder}/handler.ts",
+      "preLaunchTask": "tsc: build - tsconfig.json"
     }
   ]
 }

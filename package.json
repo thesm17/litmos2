@@ -9,9 +9,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/google-apps-script": "^1.0.10",
     "fetch": "^1.1.0",
     "node-fetch": "^2.6.0",
     "request": "^2.88.0",
-    "request-promise": "^4.2.5"
+    "request-promise": "^4.2.5",
+    "typescript": "^3.7.5"
   }
 }
