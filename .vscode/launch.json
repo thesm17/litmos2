@@ -9,7 +9,8 @@
       "request": "launch",
       "name": "Launch Program",
       "program": "${workspaceFolder}/handler.ts",
-      "preLaunchTask": "tsc: build - tsconfig.json"
+      //"preLaunchTask": "tsc: build - tsconfig.json",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
     }
   ]
 }

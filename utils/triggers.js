@@ -1,10 +1,9 @@
 function runEveryNight() {
-  ScriptApp.newTrigger('updatePage1').timeBased().atHour(1).everyDays(1).create();
-  ScriptApp.newTrigger('updatePage2').timeBased().atHour(3).everyDays(1).create();
+  ScriptApp.newTrigger('updatePage1').timeBased().atHour(20).everyDays(1).create();
+  ScriptApp.newTrigger('updatePage2').timeBased().atHour(1).everyDays(1).create();
   ScriptApp.newTrigger('updatePage3').timeBased().atHour(5).everyDays(1).create();
-
+  ScriptApp.newTrigger('updatePage4').timeBased().atHour(12).everyDays(1).create();
 }
-
 
 //with a 1 minute delay between, run through all the rows in the first, then second, then third sheets
 function updatePage1() {
@@ -12,14 +11,22 @@ function updatePage1() {
   setPage(0);
   ScriptApp.newTrigger('updateTrainingStatusOnSheet').timeBased().everyMinutes(1).create();
 }
+
 function updatePage2() {
   refreshUserProps();
   setPage(1);
   ScriptApp.newTrigger('updateTrainingStatusOnSheet').timeBased().everyMinutes(1).create();
 }
+
 function updatePage3() {
   refreshUserProps();
   setPage(2);
+  ScriptApp.newTrigger('updateTrainingStatusOnSheet').timeBased().everyMinutes(1).create();
+}
+
+function updatePage4() {
+  refreshUserProps();
+  setPage(3);
   ScriptApp.newTrigger('updateTrainingStatusOnSheet').timeBased().everyMinutes(1).create();
 }
 
@@ -134,6 +141,7 @@ function updateSheetWithNewTrainingInfo (row, rangeValues, sheet) {
   Logger.log("Range values: \n"+rangeValues);
   var range = sheet.getRange(row,4,1,5);  
   var formattedResults = range.setValues([rangeValues]);
+  var actualRange = range.getValues();
   return formattedResults;
 }
 
@@ -170,4 +178,27 @@ function deletePageUpdateTrigger() {
   for (var i = 0; i < triggersToDelete.length; i++) {
     ScriptApp.deleteTrigger(triggersToDelete[i]);
   }
+}
+
+function updateCustomRow() {
+  //define the row and sheet to update based on sheets row #
+  var row = 12;
+  var sheetNum = 0;
+  
+  //Run it!
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheets()[sheetNum];
+  var sheetName = sheet.getName();
+  var companyID = sheet.getRange(row,1).getValue();
+  var rTC = "7";
+  var trainingData = getCompanyTrainingStatus(companyID, rTC);
+  var formattedRange = formatRange(trainingData);
+  var sheetUpdateStatus = updateSheetWithNewTrainingInfo(row, formattedRange, sheet);
+  Logger.log("\nSheet successfully updated with the data: "+sheetUpdateStatus.getValues());
+}
+
+function learnUserProperties() {
+ userProperties = PropertiesService.getUserProperties();
+ var props =  userProperties.getProperties()
+  Logger.log("props gotten!");
 }
