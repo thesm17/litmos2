@@ -1,3 +1,7 @@
+/**
+ * The following functions: (getUser, getLitmosAchievement, getAllCompanyUsers) are via the Litmos API
+ */
+
 var baseUrl = "https://api.litmos.com/v1.svc/";
 var options = { 
     'method': 'GET',
@@ -46,3 +50,67 @@ function getAllCompanyUsers(companyID) {
       Logger.log(err)
     } 
   }
+
+/**
+ * The following functions: (getSharpSpringLead, updateSharpSpringLeads)
+ */
+
+
+  /**
+ * accountID and secretKey will be stored in UserProperties and retrieved here
+ */
+var keys = getKeys_()
+var accountID = keys.accountID;
+var secretKey = keys.secretKey ;
+var shspBaseUrl = "https://api.sharpspring.com/pubapi/v1/?";
+var newurl = shspBaseUrl+"accountID="+accountID+"&secretKey="+secretKey;
+var id = "2100";
+
+
+var shspOptions = { 
+    'method': 'POST',
+    'muteHttpExceptions' : true,
+    'contentType': 'application/json', 
+    'payload': {}    
+  }
+
+function getSharpSpringLead () {
+  var method =  "getLeads";
+  var params =  {
+    'where':{
+      'emailAddress': "smitty@sharpspring.com"}
+    
+  }  
+  var payload=  {
+    'method': method,
+    'params' : params,
+    'id': id
+  }
+  shspOptions.payload = JSON.stringify(payload);
+  var result = UrlFetchApp.fetch(newurl,shspOptions);
+  var lead =  (result.getContentText());
+  return lead;
+}
+
+function updateSharpSpringLeads (leadsArray) {
+  var method =  "updateLeads";
+  var params =  {
+    'objects':leadsArray 
+  }  
+  var payload=  {
+    'method': method,
+    'params' : params,
+    'id': id
+  }
+  shspOptions.payload = JSON.stringify(payload);
+  var result = UrlFetchApp.fetch(newurl,shspOptions);
+  var lead =  (result.getContentText());
+  return lead;
+}
+
+
+
+function getKeys_() {
+  userProperties = PropertiesService.getUserProperties();
+  return {accountID: userProperties.getProperty('accountID'), secretKey: userProperties.getProperty('secretKey')}
+}
