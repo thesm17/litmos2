@@ -1,2 +1,3 @@
 manageCerts.js
 **/node_modules/**
+/utils/AddHistoricalData.js
