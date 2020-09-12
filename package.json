@@ -12,7 +12,7 @@
     "@types/google-apps-script": "^1.0.10",
     "eslint": "^6.8.0",
     "fetch": "^1.1.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "tslint": "^6.0.0",
